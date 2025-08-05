@@ -10,60 +10,87 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // PRODUCTOS
-// FUNCIÓN PARA SUBIR IMAGENES (MODIFICADA)
-async function uploadImage(file, productId = '') {
-    const storageRef = storage.ref();
-    // Crear nombre de archivo único con ID de producto si existe
-    const fileName = productId 
-        ? `productos/${productId}_${Date.now()}_${file.name}`
-        : `productos/${Date.now()}_${file.name}`;
+// FUNCIÓN MODIFICADA PARA SUBIR IMÁGENES (ahora solo devuelve el nombre del archivo)
+async function handleImageUpload(fileInput, defaultImage = '') {
+    if (!fileInput.files || fileInput.files.length === 0) {
+        return defaultImage; // Mantener la imagen existente si no hay nueva
+    }
     
-    const fileRef = storageRef.child(fileName);
-    await fileRef.put(file);
-    return await fileRef.getDownloadURL();
+    const file = fileInput.files[0];
+    return file.name; // Solo devolvemos el nombre del archivo
 }
 
-// FUNCIÓN PARA GUARDAR PRODUCTO (ACTUALIZADA)
+// FUNCIÓN MODIFICADA saveProduct
 async function saveProduct() {
     const name = document.getElementById('productName').value;
     const category = document.getElementById('productCategory').value;
     const description = document.getElementById('productDescription').value;
-    const photo1 = document.getElementById('productPhoto1').files[0];
-    const photo2 = document.getElementById('productPhoto2').files[0];
+    const photo1Input = document.getElementById('productPhoto1');
+    const photo2Input = document.getElementById('productPhoto2');
     
-    if (!name || !category || !description || !photo1) {
+    const currentImage1Preview = document.getElementById('currentImage1Preview');
+    const currentImage2Preview = document.getElementById('currentImage2Preview');
+    if (currentImage1Preview) {
+        currentImage1Preview.src = '';
+        currentImage1Preview.style.display = 'none';
+    }
+    if (currentImage2Preview) {
+        currentImage2Preview.src = '';
+        currentImage2Preview.style.display = 'none';
+    }
+
+
+    if (!name || !category || !description) {
         alert('Por favor complete todos los campos requeridos');
         return;
     }
     
     try {
-        // Subir imágenes con referencia al ID del producto si estamos editando
-        const photo1Url = await uploadImage(photo1, editingProductId);
-        let photo2Url = '';
+        // Obtener nombres de archivo (no subimos a Firebase Storage)
+        let photo1Name = await handleImageUpload(photo1Input);
+        let photo2Name = '';
         
-        if (photo2) {
-            photo2Url = await uploadImage(photo2, editingProductId);
+        if (photo2Input.files.length > 0) {
+            photo2Name = await handleImageUpload(photo2Input);
         }
         
+        // Validar que al menos hay una imagen (para nuevos productos)
+        if (!editingProductId && !photo1Name) {
+            alert('Debe seleccionar al menos una imagen para el producto');
+            return;
+        }
+        
+        // Estructura de datos con nombres de archivo
         const productData = {
             "nombre": name,
             id_categoria: category,
             "descripcion": description,
-            "foto1": photo1Url,
-            foto2: photo2Url
+            "foto1": photo1Name,
+            foto2: photo2Name
         };
         
         if (editingProductId) {
-            // Actualizar producto existente
+            // Para edición, mantener imagen anterior si no se sube nueva
+            const currentProduct = (await db.collection('productos').doc(editingProductId).get()).data();
+            if (!photo1Name && currentProduct["foto1"]) {
+                productData["foto1"] = currentProduct["foto1"];
+            }
+            if (!photo2Name && currentProduct.foto2) {
+                productData.foto2 = currentProduct.foto2;
+            }
+            
             await db.collection('productos').doc(editingProductId).update(productData);
         } else {
-            // Crear nuevo producto
-            const docRef = await db.collection('productos').add(productData);
-            // Si tenemos foto2, actualizar con el ID generado
-            if (photo2) {
-                const newPhoto2Url = await uploadImage(photo2, docRef.id);
-                await docRef.update({ "foto2": newPhoto2Url });
-            }
+            await db.collection('productos').add(productData);
+        }
+        
+        // Aquí deberías implementar la subida física del archivo a tu servidor
+        // Esto es un ejemplo conceptual:
+        if (photo1Input.files.length > 0) {
+            await uploadFileToServer(photo1Input.files[0], 'assets/productos/');
+        }
+        if (photo2Input.files.length > 0) {
+            await uploadFileToServer(photo2Input.files[0], 'assets/productos/');
         }
         
         document.getElementById('productForm').reset();
@@ -72,11 +99,24 @@ async function saveProduct() {
         loadProductsForAdmin();
     } catch (error) {
         console.error("Error guardando producto:", error);
-        alert('Error guardando producto');
+        alert('Error guardando producto: ' + error.message);
     }
 }
 
-// FUNCIÓN PARA CARGAR PRODUCTOS (ACTUALIZADA)
+// Función de ejemplo para subir archivos al servidor (debes implementarla)
+async function uploadFileToServer(file, directory) {
+    // Implementación dependerá de tu backend
+    console.log(`Simulando subida de ${file.name} a ${directory}`);
+    // En un caso real, usarías fetch o XMLHttpRequest para enviar el archivo
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            console.log(`Archivo ${file.name} subido exitosamente`);
+            resolve();
+        }, 1000);
+    });
+}
+
+// FUNCIÓN MODIFICADA loadProductsForAdmin para mostrar imágenes locales
 async function loadProductsForAdmin() {
     const table = document.getElementById('products-table');
     table.innerHTML = '<tr><td colspan="4" class="text-center"><div class="spinner-border text-primary" role="status"></div></td></tr>';
@@ -101,22 +141,19 @@ async function loadProductsForAdmin() {
             const product = doc.data();
             const categoryName = categories[product.id_categoria] || 'Desconocida';
             
-            // Obtener solo el nombre del archivo de la URL completa
-            const getImageName = (url) => {
-                if (!url) return 'default.jpg';
-                const parts = url.split('%2F');
-                return parts[parts.length - 1].split('?')[0];
-            };
+            // Construir rutas locales a las imágenes
+            const image1Path = product["foto1"] ? `assets/productos/${product["foto1"]}` : 'assets/default-product.jpg';
+            const image2Path = product.foto2 ? `assets/productos/${product.foto2}` : '';
             
             table.innerHTML += `
                 <tr>
+                    
                     <td>${product["nombre"]}</td>
                     <td>${categoryName}</td>
                     <td>${product["descripcion"]?.substring(0, 50) || 'Sin descripción'}...</td>
+                    <td><img src="${image1Path}" alt="${product["nombre"]}" style="max-height: 50px;"></td>
+                    <td><img src="${image2Path}" alt="${product["nombre"]}" style="max-height: 50px;"></td>
                     <td>
-                        <img src="assets/productos/${getImageName(product["foto1"])}" 
-                             style="max-width: 50px; max-height: 50px;" 
-                             alt="Miniatura">
                         <button class="btn btn-sm btn-warning" onclick="editProduct('${doc.id}')">Editar</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteProduct('${doc.id}')">Eliminar</button>
                     </td>
@@ -129,7 +166,7 @@ async function loadProductsForAdmin() {
     }
 }
 
-
+// FUNCIÓN MODIFICADA editProduct para manejar imágenes locales
 async function editProduct(productId) {
     try {
         const doc = await db.collection('productos').doc(productId).get();
@@ -139,28 +176,46 @@ async function editProduct(productId) {
         }
         
         const product = doc.data();
-        document.getElementById('productName').value = product.nombre;
-        document.getElementById('productDescription').value = product.descripcion;
+        document.getElementById('productName').value = product["nombre"];
+        document.getElementById('productDescription').value = product["descripcion"];
         
-        // Seleccionar la categoría correcta
+        // Obtener referencias a los elementos de vista previa
+        const currentImage1Preview = document.getElementById('currentImage1Preview');
+        const currentImage2Preview = document.getElementById('currentImage2Preview');
+        
+        // Mostrar vista previa de imágenes actuales si existen
+        if (product["foto1"] && currentImage1Preview) {
+            currentImage1Preview.src = `assets/productos/${product["foto1"]}`;
+            currentImage1Preview.style.display = 'block';
+        } else if (currentImage1Preview) {
+            currentImage1Preview.style.display = 'none';
+        }
+        
+        if (product.foto2 && currentImage2Preview) {
+            currentImage2Preview.src = `assets/productos/${product.foto2}`;
+            currentImage2Preview.style.display = 'block';
+        } else if (currentImage2Preview) {
+            currentImage2Preview.style.display = 'none';
+        }
+        
+        // Seleccionar categoría
         const categorySelect = document.getElementById('productCategory');
-        for (let i = 0; i < categorySelect.options.length; i++) {
-            if (categorySelect.options[i].value === product.id_categoria) {
-                categorySelect.selectedIndex = i;
-                break;
+        if (categorySelect) {
+            for (let i = 0; i < categorySelect.options.length; i++) {
+                if (categorySelect.options[i].value === product.id_categoria) {
+                    categorySelect.selectedIndex = i;
+                    break;
+                }
             }
         }
         
         editingProductId = productId;
-        
-        // Mostrar modal
-        const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
-        modal.show();
+        new bootstrap.Modal(document.getElementById('addProductModal')).show();
     } catch (error) {
         console.error("Error editando producto:", error);
+        alert('Error al cargar el producto para edición');
     }
 }
-
 
 // FUNCIÓN PARA ELIMINAR PRODUCTO (ACTUALIZADA PARA ELIMINAR IMÁGENES)
 async function deleteProduct(productId) {
