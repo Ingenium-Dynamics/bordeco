@@ -6,39 +6,23 @@
     <title>Bordeco Artesanías - Bordados Personalizados</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome para iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
     <style>
         .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1618354691373-d851c5c3a990?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1015&q=80');
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('img/hero-bg.jpg');
             background-size: cover;
             background-position: center;
             color: white;
             padding: 100px 0;
-            margin-bottom: 30px;
         }
-        .product-card {
+        .product-preview {
             transition: transform 0.3s;
-            margin-bottom: 20px;
         }
-        .product-card:hover {
+        .product-preview:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .footer {
-            background-color: #f8f9fa;
-            padding: 30px 0;
-        }
-        .social-icon {
-            font-size: 24px;
-            margin: 0 10px;
-            color: #6c757d;
-        }
-        .social-icon:hover {
-            color: #0d6efd;
-        }
-        .nav-item {
-            margin: 0 10px;
         }
     </style>
 </head>
@@ -46,8 +30,8 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img src="https://via.placeholder.com/150x50?text=Bordeco+Artesanías" alt="Bordeco Artesanías" height="30">
+            <a class="navbar-brand" href="index.html">
+                <img src="assets/img/logo.jpg" alt="Bordeco Artesanías" height="40">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -55,16 +39,16 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Inicio</a>
+                        <a class="nav-link active" href="index.html">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#catalogo">Catálogo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#nosotros">Nosotros</a>
+                        <a class="nav-link" href="catalog.html">Catálogo</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contacto">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="admin.html">Admin</a>
                     </li>
                 </ul>
             </div>
@@ -76,11 +60,23 @@
         <div class="container">
             <h1 class="display-4 fw-bold">Bordeco Artesanías</h1>
             <p class="lead">Bordados personalizados con amor y dedicación</p>
-            <a href="#catalogo" class="btn btn-primary btn-lg mt-3">Ver Catálogo</a>
+            <a href="catalog.html" class="btn btn-primary btn-lg mt-3">Ver Catálogo</a>
         </div>
     </section>
 
-    <!-- About Section -->
+    <!-- Productos destacados -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Productos Destacados</h2>
+            <div class="row" id="featured-products">
+                <!-- Los productos se cargarán con JavaScript -->
+            </div>
+            <div class="text-center mt-4">
+                <a href="catalog.html" class="btn btn-outline-primary">Ver Catálogo Completo</a>
+            </div>
+        </div>
+    </section>
+       <!-- About Section -->
     <section id="nosotros" class="py-5">
         <div class="container">
             <div class="row align-items-center">
@@ -101,56 +97,7 @@
             </div>
         </div>
     </section>
-
-    <!-- Catálogo Section -->
-    <section id="catalogo" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-5">Nuestro Catálogo</h2>
-            <div class="row">
-                <!-- Producto 1 -->
-                <div class="col-md-4">
-                    <div class="card product-card">
-                        <img src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" class="card-img-top" alt="Bordado floral">
-                        <div class="card-body">
-                            <h5 class="card-title">Bordados Florales</h5>
-                            <p class="card-text">Diseños florales tradicionales en diferentes tamaños y colores.</p>
-                            <a href="#" class="btn btn-outline-primary">Ver más</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Producto 2 -->
-                <div class="col-md-4">
-                    <div class="card product-card">
-                        <img src="https://images.unsplash.com/photo-1560743641-3914f2c45636?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" class="card-img-top" alt="Bordado personalizado">
-                        <div class="card-body">
-                            <h5 class="card-title">Bordados Personalizados</h5>
-                            <p class="card-text">Crea tu propio diseño o déjanos inspirarte para algo único.</p>
-                            <a href="#" class="btn btn-outline-primary">Ver más</a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Producto 3 -->
-                <div class="col-md-4">
-                    <div class="card product-card">
-                        <img src="https://images.unsplash.com/photo-1528174959316-3c8f5e5e5b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" class="card-img-top" alt="Bordado en ropa">
-                        <div class="card-body">
-                            <h5 class="card-title">Ropa Bordada</h5>
-                            <p class="card-text">Camisas, blusas, jeans y más con nuestros exclusivos bordados.</p>
-                            <a href="#" class="btn btn-outline-primary">Ver más</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-4">
-                <a href="#" class="btn btn-primary">Ver Catálogo Completo</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonios -->
+ <!-- Testimonios -->
     <section class="py-5">
         <div class="container">
             <h2 class="text-center fw-bold mb-5">Lo que dicen nuestros clientes</h2>
@@ -316,5 +263,39 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/firebase.js"></script>
+    <script src="assets/js/catalog.js"></script>
+    <script>
+        // Cargar productos destacados
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFeaturedProducts();
+        });
+
+        async function loadFeaturedProducts() {
+            const productsContainer = document.getElementById('featured-products');
+            try {
+                const querySnapshot = await db.collection('productos').limit(3).get();
+                
+                querySnapshot.forEach(doc => {
+                    const product = doc.data();
+                    productsContainer.innerHTML += `
+                        <div class="col-md-4 mb-4">
+                            <div class="card product-preview h-100">
+                                <img src="${product.foto1}" class="card-img-top" alt="${product.nombre}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${product.nombre}</h5>
+                                    <p class="card-text">${product.descripcion.substring(0, 100)}...</p>
+                                    <a href="catalog.html#product-${doc.id}" class="btn btn-outline-primary">Ver más</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                console.error("Error cargando productos:", error);
+            }
+        }
+    </script>
 </body>
 </html>
