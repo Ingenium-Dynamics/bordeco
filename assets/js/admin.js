@@ -10,6 +10,73 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // PRODUCTOS
+// FUNCIÓN PARA SUBIR IMAGENES (MODIFICADA)
+async function uploadImage(file, productId = '') {
+    const storageRef = storage.ref();
+    // Crear nombre de archivo único con ID de producto si existe
+    const fileName = productId 
+        ? `productos/${productId}_${Date.now()}_${file.name}`
+        : `productos/${Date.now()}_${file.name}`;
+    
+    const fileRef = storageRef.child(fileName);
+    await fileRef.put(file);
+    return await fileRef.getDownloadURL();
+}
+
+// FUNCIÓN PARA GUARDAR PRODUCTO (ACTUALIZADA)
+async function saveProduct() {
+    const name = document.getElementById('productName').value;
+    const category = document.getElementById('productCategory').value;
+    const description = document.getElementById('productDescription').value;
+    const photo1 = document.getElementById('productPhoto1').files[0];
+    const photo2 = document.getElementById('productPhoto2').files[0];
+    
+    if (!name || !category || !description || !photo1) {
+        alert('Por favor complete todos los campos requeridos');
+        return;
+    }
+    
+    try {
+        // Subir imágenes con referencia al ID del producto si estamos editando
+        const photo1Url = await uploadImage(photo1, editingProductId);
+        let photo2Url = '';
+        
+        if (photo2) {
+            photo2Url = await uploadImage(photo2, editingProductId);
+        }
+        
+        const productData = {
+            "nombre": name,
+            id_categoria: category,
+            "descripcion": description,
+            "foto1": photo1Url,
+            foto2: photo2Url
+        };
+        
+        if (editingProductId) {
+            // Actualizar producto existente
+            await db.collection('productos').doc(editingProductId).update(productData);
+        } else {
+            // Crear nuevo producto
+            const docRef = await db.collection('productos').add(productData);
+            // Si tenemos foto2, actualizar con el ID generado
+            if (photo2) {
+                const newPhoto2Url = await uploadImage(photo2, docRef.id);
+                await docRef.update({ "foto2": newPhoto2Url });
+            }
+        }
+        
+        document.getElementById('productForm').reset();
+        bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
+        editingProductId = null;
+        loadProductsForAdmin();
+    } catch (error) {
+        console.error("Error guardando producto:", error);
+        alert('Error guardando producto');
+    }
+}
+
+// FUNCIÓN PARA CARGAR PRODUCTOS (ACTUALIZADA)
 async function loadProductsForAdmin() {
     const table = document.getElementById('products-table');
     table.innerHTML = '<tr><td colspan="4" class="text-center"><div class="spinner-border text-primary" role="status"></div></td></tr>';
@@ -24,7 +91,6 @@ async function loadProductsForAdmin() {
         
         table.innerHTML = '';
         
-        // Necesitamos cargar los nombres de las categorías
         const categoriesSnapshot = await db.collection('categorias').get();
         const categories = {};
         categoriesSnapshot.forEach(doc => {
@@ -35,12 +101,22 @@ async function loadProductsForAdmin() {
             const product = doc.data();
             const categoryName = categories[product.id_categoria] || 'Desconocida';
             
+            // Obtener solo el nombre del archivo de la URL completa
+            const getImageName = (url) => {
+                if (!url) return 'default.jpg';
+                const parts = url.split('%2F');
+                return parts[parts.length - 1].split('?')[0];
+            };
+            
             table.innerHTML += `
                 <tr>
-                    <td>${product.nombre}</td>
+                    <td>${product["nombre"]}</td>
                     <td>${categoryName}</td>
-                    <td>${product.descripcion.substring(0, 50)}...</td>
+                    <td>${product["descripcion"]?.substring(0, 50) || 'Sin descripción'}...</td>
                     <td>
+                        <img src="assets/productos/${getImageName(product["foto1"])}" 
+                             style="max-width: 50px; max-height: 50px;" 
+                             alt="Miniatura">
                         <button class="btn btn-sm btn-warning" onclick="editProduct('${doc.id}')">Editar</button>
                         <button class="btn btn-sm btn-danger" onclick="deleteProduct('${doc.id}')">Eliminar</button>
                     </td>
@@ -53,55 +129,6 @@ async function loadProductsForAdmin() {
     }
 }
 
-async function saveProduct() {
-    const name = document.getElementById('productName').value;
-    const category = document.getElementById('productCategory').value;
-    const description = document.getElementById('productDescription').value;
-    const photo1 = document.getElementById('productPhoto1').files[0];
-    const photo2 = document.getElementById('productPhoto2').files[0];
-    
-    if (!name || !category || !description || !photo1) {
-        alert('Por favor complete todos los campos requeridos');
-        return;
-    }
-    
-    try {
-        // Subir imágenes a Firebase Storage
-        const photo1Url = await uploadImage(photo1);
-        let photo2Url = '';
-        
-        if (photo2) {
-            photo2Url = await uploadImage(photo2);
-        }
-        
-        const productData = {
-            nombre: name,
-            id_categoria: category,
-            descripcion: description,
-            foto1: photo1Url,
-            foto2: photo2Url
-        };
-        
-        if (editingProductId) {
-            // Actualizar producto existente
-            await db.collection('productos').doc(editingProductId).update(productData);
-        } else {
-            // Crear nuevo producto
-            await db.collection('productos').add(productData);
-        }
-        
-        // Limpiar formulario y cerrar modal
-        document.getElementById('productForm').reset();
-        bootstrap.Modal.getInstance(document.getElementById('addProductModal')).hide();
-        editingProductId = null;
-        
-        // Recargar tabla
-        loadProductsForAdmin();
-    } catch (error) {
-        console.error("Error guardando producto:", error);
-        alert('Error guardando producto');
-    }
-}
 
 async function editProduct(productId) {
     try {
@@ -134,14 +161,39 @@ async function editProduct(productId) {
     }
 }
 
+
+// FUNCIÓN PARA ELIMINAR PRODUCTO (ACTUALIZADA PARA ELIMINAR IMÁGENES)
 async function deleteProduct(productId) {
-    if (!confirm('¿Está seguro de eliminar este producto?')) return;
+    if (!confirm('¿Está seguro de eliminar este producto y sus imágenes asociadas?')) return;
     
     try {
+        // Primero obtenemos el producto para tener las URLs de las imágenes
+        const doc = await db.collection('productos').doc(productId).get();
+        if (doc.exists) {
+            const product = doc.data();
+            
+            // Función para eliminar imagen de Storage
+            const deleteImage = async (url) => {
+                if (!url) return;
+                try {
+                    const imageRef = storage.refFromURL(url);
+                    await imageRef.delete();
+                } catch (error) {
+                    console.warn("Error eliminando imagen:", url, error);
+                }
+            };
+            
+            // Eliminar ambas imágenes
+            await deleteImage(product["foto1"]);
+            await deleteImage(product.foto2);
+        }
+        
+        // Finalmente eliminamos el documento
         await db.collection('productos').doc(productId).delete();
         loadProductsForAdmin();
     } catch (error) {
         console.error("Error eliminando producto:", error);
+        alert('Error al eliminar el producto');
     }
 }
 
