@@ -52,7 +52,7 @@ async function loadProducts(categoryId = 'all') {
             container.innerHTML += `
                 <div class="col-md-4 mb-4" id="product-${doc.id}">
                     <div class="card h-100">
-                        <img src="${product.foto1}" class="card-img-top" alt="${product.nombre}">
+                        <img src="assets/productos/${product.foto1}" class="card-img-top" alt="${product.nombre}">
                         <div class="card-body">
                             <h5 class="card-title">${product.nombre}</h5>
                             <p class="card-text">${product.descripcion}</p>
