@@ -4,78 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bordeco Artesanías - Bordados Personalizados</title>
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
- 
 </head>
 <body>
+
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <img src="assets/img/logo.jpg" alt="Bordeco Artesanías" height="40">
+                <img src="assets/img/logo.jpg" alt="Bordeco Artesanías">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="index.html">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="catalog.html">Catálogo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#contacto">Contacto</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin.html">Admin</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="catalog.html">Catálogo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin.html">Admin</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section text-center">
+    <section class="hero-section">
         <div class="container">
             <h1 class="display-4 fw-bold">Bordeco Artesanías</h1>
-            <p class="lead">Bordados personalizados con amor y dedicación</p>
+            <p class="lead">Bordados personalizados con amor y dedicación.</p>
             <a href="catalog.html" class="btn btn-primary btn-lg mt-3">Ver Catálogo</a>
         </div>
     </section>
 
-    <!-- Productos destacados -->
-    <section class="py-5">
+    <!-- Productos Destacados -->
+    <section id="destacados" class="py-5">
         <div class="container">
-            <h2 class="text-center mb-5">Productos Destacados</h2>
+            <h2 class="section-title">Productos Destacados</h2>
             <div class="row" id="featured-products">
-                <!-- Los productos se cargarán con JavaScript -->
+                <!-- Productos se cargarán con JS -->
             </div>
-            <div class="text-center mt-4">
-                <a href="catalog.html" class="btn btn-outline-primary">Ver Catálogo Completo</a>
+            <div class="text-center mt-5">
+                <a href="catalog.html" class="btn btn-outline-primary btn-lg">Ver Catálogo Completo</a>
             </div>
         </div>
     </section>
-       <!-- About Section -->
-    <section id="nosotros" class="py-5">
+
+    <!-- Sobre Nosotros -->
+    <section id="nosotros" class="bg-light">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h2 class="fw-bold mb-4">Sobre Nosotros</h2>
-                    <p>En Bordeco Artesanías transformamos telas en obras de arte mediante el antiguo oficio del bordado. Cada pieza es creada con esmero, combinando técnicas tradicionales con diseños contemporáneos.</p>
-                    <p>Nuestro equipo de artesanas lleva más de 10 años dedicadas al arte del bordado, creando piezas únicas que cuentan historias y preservan nuestra herencia cultural.</p>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-primary me-2"></i> Bordados 100% hechos a mano</li>
-                        <li><i class="fas fa-check text-primary me-2"></i> Materiales de primera calidad</li>
-                        <li><i class="fas fa-check text-primary me-2"></i> Diseños personalizados</li>
-                        <li><i class="fas fa-check text-primary me-2"></i> Atención personalizada</li>
+                    <h2 class="section-title text-start">Sobre Nosotros</h2>
+                    <p>En Bordeco Artesanías transformamos telas en obras de arte. Cada pieza es creada con esmero, combinando técnicas tradicionales con diseños contemporáneos para contar historias y preservar nuestra herencia cultural.</p>
+                    <ul class="list-unstyled mt-4">
+                        <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Bordados 100% hechos a mano</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Materiales de primera calidad</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Diseños únicos y personalizados</li>
+                        <li class="mb-3"><i class="fas fa-check-circle text-primary me-2"></i> Más de 10 años de experiencia</li>
                     </ul>
                 </div>
                 <div class="col-lg-6">
@@ -84,105 +73,30 @@
             </div>
         </div>
     </section>
- <!-- Testimonios -->
-    <section class="py-5">
+
+    <!-- Testimonios -->
+    <section id="testimonios">
         <div class="container">
-            <h2 class="text-center fw-bold mb-5">Lo que dicen nuestros clientes</h2>
+            <h2 class="section-title">Lo que dicen nuestros clientes</h2>
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-quote-left text-muted mb-3" style="font-size: 24px;"></i>
-                            <p class="card-text">"Quedé maravillada con el bordado de mi vestido de novia. Cada detalle fue perfecto y superó mis expectativas."</p>
-                            <div class="mt-3">
-                                <img src="https://randomuser.me/api/portraits/women/32.jpg" class="rounded-circle" width="60" alt="Cliente">
-                                <h5 class="mt-2 mb-0">María González</h5>
-                                <small class="text-muted">Cliente desde 2020</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-quote-left text-muted mb-3" style="font-size: 24px;"></i>
-                            <p class="card-text">"El regalo corporativo que encargamos fue un éxito. Todos quedaron impresionados con la calidad del bordado."</p>
-                            <div class="mt-3">
-                                <img src="https://randomuser.me/api/portraits/men/45.jpg" class="rounded-circle" width="60" alt="Cliente">
-                                <h5 class="mt-2 mb-0">Carlos Méndez</h5>
-                                <small class="text-muted">Empresa XYZ</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-quote-left text-muted mb-3" style="font-size: 24px;"></i>
-                            <p class="card-text">"Siempre recurro a Bordeco para mis proyectos especiales. Su atención al detalle es incomparable."</p>
-                            <div class="mt-3">
-                                <img src="https://randomuser.me/api/portraits/women/68.jpg" class="rounded-circle" width="60" alt="Cliente">
-                                <h5 class="mt-2 mb-0">Ana Rodríguez</h5>
-                                <small class="text-muted">Diseñadora de Moda</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Testimonios se pueden cargar dinámicamente o dejar estáticos -->
             </div>
         </div>
     </section>
 
     <!-- Contacto -->
-    <section id="contacto" class="py-5 bg-light">
+    <section id="contacto" class="bg-light">
         <div class="container">
+            <h2 class="section-title">Contáctanos</h2>
             <div class="row">
                 <div class="col-lg-6">
-                    <h2 class="fw-bold mb-4">Contáctanos</h2>
                     <p>¿Tienes un proyecto en mente? Escríbenos y con gusto te asesoraremos.</p>
-                    
-                    <div class="mb-4">
-                        <h5><i class="fas fa-map-marker-alt text-primary me-2"></i> Dirección</h5>
-                        <p>Calle Artesanal #123, Colonia Tradición, Ciudad</p>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h5><i class="fas fa-phone-alt text-primary me-2"></i> Teléfono</h5>
-                        <p>+52 55 1234 5678</p>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h5><i class="fas fa-envelope text-primary me-2"></i> Email</h5>
-                        <p>contacto@bordecoartesanias.com</p>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <h5><i class="fas fa-clock text-primary me-2"></i> Horario</h5>
-                        <p>Lunes a Viernes: 9:00 am - 6:00 pm<br>Sábados: 10:00 am - 2:00 pm</p>
-                    </div>
-                </div>
-                
-                <div class="col-lg-6">
                     <form>
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Teléfono</label>
-                            <input type="tel" class="form-control" id="telefono">
-                        </div>
-                        <div class="mb-3">
-                            <label for="mensaje" class="form-label">Mensaje</label>
-                            <textarea class="form-control" id="mensaje" rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Enviar Mensaje</button>
+                        <!-- Formulario de contacto -->
                     </form>
+                </div>
+                <div class="col-lg-6">
+                    <!-- Información de contacto -->
                 </div>
             </div>
         </div>
@@ -192,84 +106,36 @@
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4 mb-md-0">
-                    <h5>Bordeco Artesanías</h5>
-                    <p>Especialistas en bordados artesanales desde 2010. Creando piezas únicas con tradición y creatividad.</p>
-                    <div class="mt-3">
-                        <a href="https://www.instagram.com/bordecoartesanias/" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
-                
-                <div class="col-md-2 mb-4 mb-md-0">
-                    <h5>Enlaces</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none">Inicio</a></li>
-                        <li><a href="#catalogo" class="text-decoration-none">Catálogo</a></li>
-                        <li><a href="#nosotros" class="text-decoration-none">Nosotros</a></li>
-                        <li><a href="#contacto" class="text-decoration-none">Contacto</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-md-3 mb-4 mb-md-0">
-                    <h5>Servicios</h5>
-                    <ul class="list-unstyled">
-                        <li>Bordado a mano</li>
-                        <li>Diseño personalizado</li>
-                        <li>Bordado en ropa</li>
-                        <li>Arte textil</li>
-                        <li>Regalos corporativos</li>
-                    </ul>
-                </div>
-                
-                <div class="col-md-3">
-                    <h5>Newsletter</h5>
-                    <p>Suscríbete para recibir novedades y promociones.</p>
-                    <form class="mb-3">
-                        <div class="input-group">
-                            <input type="email" class="form-control" placeholder="Tu email">
-                            <button class="btn btn-primary" type="submit">Suscribir</button>
-                        </div>
-                    </form>
-                </div>
+                <!-- Contenido del footer -->
             </div>
-            
-            <hr class="my-4">
-            
-            <div class="row">
-                <div class="col-md-6 text-center text-md-start">
-                    <p class="mb-0">&copy; 2023 Bordeco Artesanías. Todos los derechos reservados.</p>
-                </div>
-                <div class="col-md-6 text-center text-md-end">
-                    <p class="mb-0">Diseñado con <i class="fas fa-heart text-danger"></i> por Bordeco</p>
-                </div>
+            <div class="bottom-bar text-center">
+                <p>&copy; 2023 Bordeco Artesanías. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     <script src="assets/js/firebase.js"></script>
     <script src="assets/js/catalog.js"></script>
     <script>
-        // Cargar productos destacados
         document.addEventListener('DOMContentLoaded', () => {
             loadFeaturedProducts();
         });
 
         async function loadFeaturedProducts() {
-            const productsContainer = document.getElementById('featured-products');
+            const container = document.getElementById('featured-products');
+            if (!container) return;
             try {
                 const querySnapshot = await db.collection('productos').limit(3).get();
-                
+                let html = '';
                 querySnapshot.forEach(doc => {
                     const product = doc.data();
-                    productsContainer.innerHTML += `
+                    html += `
                         <div class="col-md-4 mb-4">
-                            <div class="card product-preview h-100">
-                                <img src="${product.foto1}" class="card-img-top" alt="${product.nombre}">
+                            <div class="card product-card h-100">
+                                <img src="assets/productos/${product.foto1}" class="card-img-top" alt="${product.nombre}">
                                 <div class="card-body">
                                     <h5 class="card-title">${product.nombre}</h5>
                                     <p class="card-text">${product.descripcion.substring(0, 100)}...</p>
@@ -279,8 +145,9 @@
                         </div>
                     `;
                 });
+                container.innerHTML = html;
             } catch (error) {
-                console.error("Error cargando productos:", error);
+                console.error("Error cargando productos destacados:", error);
             }
         }
     </script>
